@@ -83,6 +83,15 @@ Dự án được bảo vệ và tối ưu hóa bởi **Portable Agent Kit** (d�
 - **Rules (`.agents/rules/`):** Ép AI tuân thủ các quy chuẩn khắt khe về code (Sử dụng DML thay vì TypeORM, không viết raw SQL, File-based routing).
 - **Workflows:** Hỗ trợ các lệnh AI slash commands như `/diagnose`, `/refactor`, `/bugfix` để tăng tốc độ debug và phân tích kiến trúc Medusa.
 
+## 🧠 Medusa AI Skills (MCP + Plugin)
+
+Dự án được trang bị bộ kỹ năng chuyên biệt cho Medusa giúp AI viết code đúng chuẩn kiến trúc:
+
+- **MCP Server (`medusa-docs`):** Kết nối trực tiếp tới tài liệu chính thức Medusa — tra cứu API, method signatures, config options theo thời gian thực.
+- **Plugin (`medusa-dev`):** 7 skills bao gồm backend patterns, admin UI, storefront integration, DB migrations — chứa best practices và anti-patterns mà docs không có.
+
+👉 **Hướng dẫn chi tiết cách tận dụng MCP + Plugin cho từng Phase học tập:** [`notes/ai-tools-guide.md`](notes/ai-tools-guide.md)
+
 ## 📈 Trạng thái học tập hiện tại
 
 Dự án đang tuân theo lộ trình 6 Phases được vạch ra trong `LEARNING_PLAN.md`:
