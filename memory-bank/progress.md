@@ -6,6 +6,9 @@
 - [x] Next.js Storefront (Port 8000).
 - [x] Kết nối DB & Migrations.
 - [x] Hệ thống AI Assistants (Portable Agent Kit) với Guard, Rules, Workflow bảo vệ dự án.
+- [x] API Endpoint kiểm thử File-based routing (`apps/backend/src/api/hello-world/route.ts`).
+- [x] Cấu hình MCP Server (`medusa-docs`, `notion`) và Plugin `medusa-dev` (7 Medusa agentic skills).
+- [x] Tài liệu hướng dẫn phối hợp MCP & Plugin theo từng Phase (`notes/ai-tools-guide.md`).
 
 ## What's Left to Build
 - [ ] Soi cấu trúc Database của Customer Module.

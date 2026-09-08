@@ -10,6 +10,7 @@
 - **Dockerized Infrastructure:** Sử dụng `docker-compose` tự build để quản lý riêng rẽ PostgreSQL (port 5433) và Redis (port 6380), thay vì dùng dịch vụ Cloud mặc định.
 - **Package Manager:** Dùng `pnpm` workspace chuẩn.
 - **Custom AI Tooling:** Tích hợp `Portable Agent Kit` để bảo vệ mã nguồn (Guard System), cung cấp Workflows và quy định (Rules) code chuyên biệt cho Medusa/Node.js.
+- **AI-Assisted Development Stack:** Kết hợp MCP Server (`medusa-docs` cung cấp real-time schema/API context) cùng Plugin `medusa-dev` (7 skills cung cấp code generator, architectural rules và anti-pattern prevention) theo workflow 6 bước (Think -> Ask -> Code -> Validate -> DB -> Test).
 
 ## Component Relationships
 - `Storefront (Next.js)` --> `Backend API (Cổng 9000)` (Xác thực qua Publishable Key).
