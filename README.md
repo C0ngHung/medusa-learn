@@ -50,6 +50,13 @@ npx medusa db:migrate
 npx medusa user -e admin@test.com -p supersecret
 ```
 
+*(Optional - Cho AI MCP)* Chạy file script SQL để cấp quyền truy cập Database cho AI Assistant đọc dữ liệu:
+```bash
+# Kết nối vào Postgres container và chạy file script
+docker exec -i database psql -U postgres -d medusa_db < scripts/setup-mcp-db-user.sql
+```
+
+
 ### 5. Khởi chạy ứng dụng
 Quay lại thư mục `my-medusa-store/` và chạy lệnh Dev:
 ```bash
@@ -73,6 +80,7 @@ pnpm run dev
 │   │   └── storefront/      # Next.js Storefront
 ├── docker-compose.yml       # Cấu hình Postgres & Redis
 ├── LEARNING_PLAN.md         # Giáo trình học chi tiết (6 Phases)
+├── scripts/                 # Các script tiện ích (vd: setup db cho MCP)
 └── README.md                # File tài liệu này
 ```
 
