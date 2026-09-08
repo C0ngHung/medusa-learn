@@ -1,13 +1,7 @@
 {
   "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp",
-        "--api-key",
-        "YOUR_API_KEY"
-      ]
+    "medusa-docs": {
+      "serverUrl": "https://docs.medusajs.com/mcp"
     }
   }
 }
