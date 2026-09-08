@@ -7,7 +7,8 @@
 - [x] Kết nối DB & Migrations.
 - [x] Hệ thống AI Assistants (Portable Agent Kit) với Guard, Rules, Workflow bảo vệ dự án.
 - [x] API Endpoint kiểm thử File-based routing (`apps/backend/src/api/hello-world/route.ts`).
-- [x] Cấu hình MCP Server (`medusa-docs`, `notion`) và Plugin `medusa-dev` (7 Medusa agentic skills).
+- [x] Cấu hình MCP Server (`medusa-docs`, `notion`, `postgres-db`) và kiểm thử query trực tiếp vào DB thành công.
+- [x] Thiết lập an toàn cho Database (Tạo `agents` role riêng cho MCP và lưu script `.sql`).
 - [x] Tài liệu hướng dẫn phối hợp MCP & Plugin theo từng Phase (`notes/ai-tools-guide.md`).
 
 ## What's Left to Build
