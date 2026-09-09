@@ -11,8 +11,9 @@
   - Phân tích kiến trúc tích hợp (Module Links, AuthIdentity, App Metadata).
   - Khởi tạo lại lộ trình học tập (`LEARNING_PLAN.md`) tập trung 100% vào Customer Module.
   - DB inspection & source code analysis (5 bảng DB, UNIQUE index email+has_account, endpoints).
-  - Hoàn thiện Plan v2 chi tiết để viết tài liệu Notion cho team.
-- **Việc cần làm tiếp:** Push tài liệu lên Notion qua MCP sau khi kết nối Integration, tiếp tục test thực chiến API.
+  - Hoàn thiện Plan v2 chi tiết và **đã xuất bản thành công toàn bộ tài liệu 6 Phase (bao gồm Workflow & Hooks và Mindmap) lên Notion**.
+  - Đã xóa script local, chuyển sang kiến trúc gọi thẳng Notion MCP (`API-update-page-markdown`) để tránh conflict dữ liệu.
+- **Việc cần làm tiếp:** Thực hành gọi API thực tế (Guest vs Registered) và đối soát dữ liệu với PostgreSQL.
 
 ## Milestone 3: Tương tác & Impact với các Module khác
 - **Trạng thái:** ⬜ Chưa bắt đầu
