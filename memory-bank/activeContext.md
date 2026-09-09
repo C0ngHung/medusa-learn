@@ -1,23 +1,20 @@
 # Active Context
 
 ## Current Focus
-Soạn thảo tài liệu chuẩn & tinh gọn về **Medusa Customer Module** để đẩy lên Notion cho team SmartOSC.
+Thực chiến với Customer Module: Trải nghiệm API Store/Admin, kiểm chứng hành vi cờ `has_account` giữa Guest và Registered User.
 
 ## Recent Changes
-- Hoàn thành nghiên cứu & audit chuyên sâu Customer Module (5 bảng DB thực tế, UNIQUE index compound `(email, has_account)`, Soft Delete, Impact với Auth/Cart/Order/Promotion, Store/Admin API endpoints).
-- Đã hoàn thiện và thống nhất **Plan v2**:
-  - Lưu tại artifact: `implementation_plan.md`
-  - Lưu tại project note: `notes/customer-module-notion-plan.md`
-- Đã kiểm tra trạng thái Notion MCP (gặp lỗi 401 do trang Notion chưa được share cho Integration).
+- Đã xuất bản thành công tài liệu **Medusa Customer Module (5 Phase)** lên Notion tại: `https://app.notion.com/p/Medusa-Customer-Module-3d54499febfc809f9493e02b69e1f691`.
+- Đã chuyển đổi kiến trúc sang Single Source of Truth: Xóa bỏ script local và sử dụng 100% MCP (`API-update-page-markdown`) để đọc/ghi trực tiếp lên Notion.
+- Bổ sung thành công sơ đồ Mermaid Mindmap/Flowchart và phần Workflow Hooks lên Notion.
 
 ## Active Decisions
-- Giữ cấu trúc 5 Phase logic: Bản chất -> `has_account` & Uniqueness -> Impact -> API có sẵn -> Hướng mở rộng (Extend).
-- Nội dung tập trung vào cốt lõi thực tế, không sao chép nguyên xi Medusa Docs.
+- Toàn bộ tài liệu chuẩn hóa 6 Phase: Bản chất -> `has_account` & Uniqueness -> Impact -> API có sẵn -> Hướng mở rộng (Extend) -> Workflow & Hooks đã được đồng bộ trực tiếp lên Notion bằng MCP.
 
-## Next Steps (Ngày mai bắt đầu)
-1. User kết nối Notion Integration vào trang "Medusa Customer Module" (Menu `...` -> **Connect to** -> Chọn Integration).
-2. AI gọi Notion MCP để lấy Page ID và cập nhật nội dung markdown đầy đủ lên Notion (`API-update-page-markdown`).
-3. Review kết quả trực tiếp trên Notion và tinh chỉnh formatting.
+## Next Steps
+1. Thực hành code thực chiến (Hands-on): Xây dựng tính năng Extend Customer Module giả lập gửi Zalo ID.
+2. Các bước triển khai chi tiết đã được lưu trữ an toàn tại `notes/customer-module-extension-plan.md`. Khi bắt đầu Session mới, hãy đọc file này để tiếp tục.
+3. Chạy `npm run dev` ở backend để verify Middleware, Hook và Subscriber.
 
 ## Known Issues / Blockers
-- Notion MCP trả về 401 do quyền truy cập trang Notion chưa được cấp cho Integration token.
+- Không còn blocker nào. Notion sync đã hoàn tất 100%.
