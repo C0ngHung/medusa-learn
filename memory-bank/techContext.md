@@ -1,19 +1,23 @@
 # Tech Context
 
 ## Technologies
-- **Core Framework:** Medusa v2 (@medusajs/medusa)
+- **Core Framework:** Medusa v2 (@medusajs/medusa v2.20.1)
 - **Runtime:** Node.js (v20+), TypeScript
-- **Database:** PostgreSQL (v15+)
-- **Cache / PubSub:** Redis (v7+)
+- **Database:** PostgreSQL (v15+) trên cổng 5433 (`medusa-learn` db)
+- **Cache / PubSub:** Redis (v7+) trên cổng 6380
 - **Storefront:** Next.js (React), Tailwind CSS
 - **Package Manager:** pnpm (v9)
-- **AI Tooling & Skills:** Medusa MCP Server (`https://docs.medusajs.com/mcp`), Notion MCP (`@notionhq/notion-mcp-server`), Plugin `medusa-dev` (7 Medusa agentic skills)
+- **AI Tooling & Skills:** 
+  - Medusa MCP Server (`https://docs.medusajs.com/mcp`)
+  - Database MCP Server (`medusa_db` query trực tiếp PostgreSQL port 5433)
+  - Notion MCP (`@notionhq/notion-mcp-server`)
+  - Plugin `medusa-dev` (7 Medusa agentic skills)
 
 ## Development Setup
 - Môi trường: Linux/WSL (Ubuntu).
 - Lệnh chạy chính: `pnpm run dev` (khởi chạy cả backend và storefront) hoặc `pnpm run backend:dev`.
 - Lệnh DB: `cd my-medusa-store/apps/backend` && `pnpm exec medusa db:migrate`.
-- Tài liệu học tập: `LEARNING_PLAN.md` và `notes/ai-tools-guide.md`.
+- Tài liệu học tập: `LEARNING_PLAN.md`, `notes/ai-tools-guide.md`, và `notes/customer-module-notion-plan.md`.
 
 ## Constraints & Gotchas
 - **pnpm v9 strictness:** Lỗi `[ERR_PNPM_IGNORED_BUILDS]` trong Medusa v2 cần được giải quyết bằng `pnpm approve-builds` trước khi install.
