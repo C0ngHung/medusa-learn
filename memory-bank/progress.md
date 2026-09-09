@@ -1,23 +1,27 @@
-# Progress
+# Progress Status
 
-## What Works
-- [x] Môi trường Docker (PostgreSQL, Redis).
-- [x] Medusa Backend (Port 9000) & Admin Dashboard.
-- [x] Next.js Storefront (Port 8000).
-- [x] Kết nối DB & Migrations.
-- [x] Hệ thống AI Assistants (Portable Agent Kit) với Guard, Rules, Workflow bảo vệ dự án.
-- [x] API Endpoint kiểm thử File-based routing (`apps/backend/src/api/hello-world/route.ts`).
-- [x] Cấu hình MCP Server (`medusa-docs`, `notion`, `postgres-db`) và kiểm thử query trực tiếp vào DB thành công.
-- [x] Thiết lập an toàn cho Database (Tạo `agents` role riêng cho MCP và lưu script `.sql`).
-- [x] Tài liệu hướng dẫn phối hợp MCP & Plugin theo từng Phase (`notes/ai-tools-guide.md`).
+## Milestone 1: Setup & Architecture 
+- **Trạng thái:** ✅ Hoàn thành
+- **Output:** DB, MCP, `setup-mcp-db-user.sql` (agents role)
 
-## What's Left to Build
-- [ ] Soi cấu trúc Database của Customer Module.
-- [ ] Thực hành gọi Store/Admin API cho Customer (CRUD).
-- [ ] Phân tích AuthIdentity và luồng Register/Login (E2E).
-- [ ] Chốt phương án Architecture (Merge Strategy, Social Profile Storage).
-- [ ] Tích hợp Google Login.
-- [ ] Xây dựng Custom Auth Provider Mock (Zalo/TikTok).
+## Milestone 2: Làm chủ Customer Module Mặc định
+- **Trạng thái:** Đang thực hiện (In Progress)
+- **Công việc đã hoàn thành:** 
+  - Khảo sát tài liệu lý thuyết Customer Module, data models.
+  - Phân tích kiến trúc tích hợp (Module Links, AuthIdentity, App Metadata).
+  - Khởi tạo lại lộ trình học tập (`LEARNING_PLAN.md`) tập trung 100% vào Customer Module.
+  - DB inspection & source code analysis (5 bảng DB, UNIQUE index email+has_account, endpoints).
+  - Hoàn thiện Plan v2 chi tiết để viết tài liệu Notion cho team.
+- **Việc cần làm tiếp:** Push tài liệu lên Notion qua MCP sau khi kết nối Integration, tiếp tục test thực chiến API.
 
-## Known Issues
-- (Chưa ghi nhận lỗi nghiêm trọng nào cản trở tiến độ. Mọi lỗi cài đặt ban đầu đã được giải quyết).
+## Milestone 3: Tương tác & Impact với các Module khác
+- **Trạng thái:** ⬜ Chưa bắt đầu
+
+## Milestone 4: Mở rộng (Extend) Customer Module
+- **Trạng thái:** ⬜ Chưa bắt đầu
+
+## Milestone 5: Xử lý Data Integrity (Merge Logic)
+- **Trạng thái:** ⬜ Chưa bắt đầu
+
+## Milestone 6: Thực chiến Social Login Use Case
+- **Trạng thái:** ⬜ Chưa bắt đầu
