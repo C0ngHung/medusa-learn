@@ -17,6 +17,7 @@
 8. [Q8: Bảng `customer` và bảng `user` khác nhau như thế nào? Tại sao chúng chả liên quan gì đến nhau?](#q8-bảng-customer-và-bảng-user-khác-nhau-như-thế-nào-tại-sao-chúng-chả-liên-quan-gì-đến-nhau)
 9. [Q9: Các điểm cắm (Hook Points) trong Workflow của Customer Module là gì? Cách viết code Custom Logic kèm cơ chế bù trừ Saga (Compensation)?](#q9-các-điểm-cắm-hook-points-trong-workflow-của-customer-module-là-gì-cách-viết-code-custom-logic-kèm-cơ-chế-bù-trừ-saga-compensation)
 10. [Q10: Người dùng có thể spam hàng nghìn địa chỉ (`customer_address`) làm sập hệ thống không? Cơ chế phòng thủ 3 lớp trong Enterprise?](#q10-người-dùng-có-thể-spam-hàng-nghìn-địa-chỉ-customer_address-làm-sập-hệ-thống-không-cơ-chế-phòng-thủ-3-lớp-trong-enterprise)
+11. [Q11: Customer Module có thực sự độc lập với Promotion Module không khi Docs ghi "Customer Group dùng để giảm giá với Promotion Module"?](#q11-customer-module-có-thực-sự-độc-lập-với-promotion-module-không-khi-docs-ghi-customer-group-dùng-để-giảm-giá-với-promotion-module)
 
 ---
 
@@ -414,5 +415,71 @@ export default defineMiddlewares({
 ```
 
 *Lưu ý nâng cao:* Middleware là chốt chặn mềm hiệu quả cho 99.9% trường hợp. Với các đợt tấn công đồng thời cực cao (Concurrent Requests qua mặt bộ đếm), Lớp 3 (PostgreSQL Trigger) sẽ là chốt chặn cứng bảo vệ toàn vẹn tuyệt đối cho Database.
+
+---
+
+### Q11: Customer Module có thực sự độc lập với Promotion Module không khi Docs ghi "Customer Group dùng để giảm giá với Promotion Module"?
+
+#### 1. Cạm bẫy tư duy: Nhầm lẫn giữa "Business Use Case" và "Module Boundary (SRP)"
+Trong tài liệu chính thức của Medusa v2 ([Customer Organization Docs](https://docs.medusajs.com/resources/references/customer/models)), có đoạn viết:
+> *"Organize customers into groups. This has a lot of benefits and supports many use cases, such as provide discounts for specific customer groups **using the Promotion Module**."*
+
+Nhiều developer khi đọc đoạn này thường lầm tưởng: *"Customer Module có dính líu đến logic giảm giá hoặc phụ thuộc vào Promotion Module"*. Nhưng hãy chú ý cụm từ then chốt: **`using the Promotion Module`**.
+
+Docs đang mô tả một **Business Use Case tổng thể** của hệ thống E-commerce:
+- **Customer Module:** Đảm nhiệm việc gom nhóm khách hàng (`CustomerGroup` — ví dụ: nhóm `VIP`, `Wholesale`).
+- **Promotion Module:** Đảm nhiệm việc định nghĩa luật và tính toán chiết khấu (*"Khách thuộc nhóm VIP thì được giảm 20%"*).
+
+#### 2. "The Deletion Test" — Bài kiểm tra cô lập kiến trúc
+Để kiểm chứng hai module có thực sự độc lập hay không trong kiến trúc phần mềm, ta áp dụng bài test: **Nếu xóa bỏ hoàn toàn module B, module A có tiếp tục hoạt động được không?**
+
+- Nếu ta vô hiệu hóa hoàn toàn `Promotion Module` trong file cấu hình `medusa-config.ts`:
+  - **Customer Module vẫn hoạt động 100% bình thường:** Bạn vẫn tạo khách hàng, tạo nhóm `VIP`, thêm/xóa khách hàng khỏi nhóm mà không gặp bất kỳ lỗi runtime nào.
+  - Trong toàn bộ mã nguồn của Customer Module, **hoàn toàn không có bất kỳ import nào** từ Promotion Module, không có bảng `promotion`, không có cột `discount_percent`, và không có một dòng code tính toán tiền tệ nào.
+- Nhóm khách hàng (`CustomerGroup`) được thiết kế hoàn toàn **"vô tri" (agnostic)** đối với mục đích sử dụng:
+  - Nhóm `B2B` có thể được **Pricing Module** sử dụng để áp bảng giá riêng.
+  - Nhóm `Newsletter` có thể được **Notification Module** sử dụng để gửi email marketing.
+  - Nhóm `Blacklist` có thể được dùng để chặn đặt hàng gian lận.
+  $\rightarrow$ Customer Module chỉ sở hữu **dữ liệu phân loại (Classification Data)**, hoàn toàn không quan tâm bên ngoài dùng dữ liệu đó vào việc gì.
+
+#### 3. Cơ chế liên kết thực tế trong Medusa v2 (Data Flow & Architecture)
+Nếu không dùng Foreign Key cứng ở cấp Database và không import chéo, hai module này tương tác với nhau như thế nào khi tính tiền giỏ hàng?
+
+Sự phối hợp diễn ra thông qua **Rule Engine** của Promotion Module và tầng điều phối **Workflow / Remote Query**:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant W as Cart / Checkout Workflow
+    participant C as Customer Module
+    participant P as Promotion Module
+
+    W->>C: "Khách hàng cus_123 thuộc những nhóm nào?"
+    C-->>W: Trả về: ["cg_vip_id"] (Dữ liệu danh bạ thuần túy)
+
+    W->>P: "Khách thuộc nhóm ['cg_vip_id'], giỏ hàng có các sản phẩm này. Tính khuyến mãi giúp tôi!"
+    Note over P: Promotion Rule Engine so khớp:<br/>rule.attribute == "customer_group_id"<br/>&& rule.values CONTAINS "cg_vip_id"
+    P-->>W: "Khớp rule! Giảm $20."
+```
+
+1. **Promotion Rule Engine:** Promotion Module lưu trữ một quy tắc (Rule) độc lập:
+   ```json
+   {
+     "attribute": "customer_group_id",
+     "operator": "in",
+     "values": ["cg_vip_id"]
+   }
+   ```
+   Bản thân Promotion Module chỉ lưu chuỗi string identifier (`customer_group_id`), nó không có Foreign Key trỏ sang bảng `customer_group`.
+2. **Orchestration qua Workflow:** Khi tính tiền đơn hàng, Workflow (ví dụ: `computeActionsStep` trong Cart Workflow) đóng vai trò nhạc trưởng:
+   - Bước 1: Hỏi Customer Module lấy danh sách group ID của khách hiện tại.
+   - Bước 2: Truyền danh sách ID này làm Context đầu vào cho Promotion Module.
+   - Bước 3: Promotion Module so khớp và tính ra số tiền giảm giá cuối cùng.
+
+#### 4. Kịch bản 30 giây phản biện với Tech Lead / Dev khác
+Khi ai đó nói: *"Customer Module có liên quan đến tính giảm giá vì có Customer Group"*, hãy trả lời bằng 3 ý:
+1. **Ranh giới trách nhiệm (SRP):** Customer Module chỉ là danh bạ lưu trữ profile và phân loại nhóm (Classification). Nó không chứa bất kỳ logic tính toán tiền tệ hay quy tắc khuyến mãi nào.
+2. **Chiều phụ thuộc một chiều (Decoupled):** Customer Module hoàn toàn không biết đến sự tồn tại của Promotion Module. Nếu tắt Promotion Module, Customer Module vẫn chạy bình thường.
+3. **Cơ chế tương tác:** Promotion Module so khớp nhóm thông qua Rule Engine dựa trên chuỗi string ID được Workflow truyền vào tại thời điểm tính giỏ hàng, không hề có ràng buộc khóa ngoại (Foreign Key) trực tiếp giữa 2 module.
 
 
