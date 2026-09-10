@@ -1,9 +1,10 @@
 # Active Context
 
 ## Current Focus
-Hoàn tất việc chuẩn hóa tài liệu (Architecture Playbook và Onboarding Guide) lên Notion. Chuẩn bị bước vào Task 1: Code Middleware Zod để validate request.
+Bổ sung câu hỏi kiến trúc chuyên sâu Q11 vào `notes/question.md` (ranh giới độc lập giữa Customer Module và Promotion Module). Chuẩn bị bước vào Task 1: Code Middleware Quota Limit để validate và bảo vệ hệ thống.
 
 ## Recent Changes
+- Bổ sung **Q11** vào `notes/question.md`: Phân tích chuyên sâu ranh giới trách nhiệm (SRP) giữa Customer Module và Promotion Module, minh chứng bằng "The Deletion Test" và Sequence Diagram điều phối qua Workflow/Remote Query.
 - Phân tích trực tiếp source code core của Medusa: `find-or-create-customer.ts` (cơ chế Guest mặc định) và `create-customer-account.ts` (ép cờ `has_account` và nối Auth Identity).
 - Đã xuất bản thành công tài liệu **Medusa v2: Core Architecture & Design Patterns** lên Notion (bao gồm kiến trúc Workflow, Extension Triad, và nguyên lý không dùng async/await trong khai báo Workflow).
 - Đã xuất bản thành công tài liệu **Onboarding Guide: Từ Java Master đến MedusaJS** lên Notion (4 cú quay xe tư duy: Event Loop, Destructuring, Duck Typing, First-class Functions).
