@@ -5,22 +5,26 @@
 - **Output:** DB, MCP, `setup-mcp-db-user.sql` (agents role), Kiến trúc cốt lõi (Notion).
 
 ## Milestone 2: Làm chủ Customer Module Mặc định
-- **Trạng thái:** Đang thực hiện (In Progress)
+- **Trạng thái:** ✅ Hoàn thành (Completed)
 - **Công việc đã hoàn thành:** 
   - Khảo sát tài liệu lý thuyết Customer Module, data models.
-  - Phân tích kiến trúc tích hợp (Module Links, AuthIdentity, App Metadata).
+  - Phân tích kiến trúc tích hợp (Module Links, AuthIdentity, App Metadata, Payment AccountHolder).
   - DB inspection & source code analysis (5 bảng DB, UNIQUE index email+has_account, endpoints, `find-or-create-customer.ts`, `create-customer-account.ts`).
-  - Hoàn thiện Plan v2 chi tiết và xuất bản thành công tài liệu **Customer Module (5 Phase)** lên Notion.
-  - Xuất bản tài liệu **Medusa v2: Core Architecture & Design Patterns** lên Notion.
-  - Xuất bản tài liệu **Onboarding Guide: Từ Java Master đến MedusaJS** lên Notion.
-- **Việc cần làm tiếp:** Thực hành xây dựng Extension (Middleware, Workflow Hook, Subscriber) cho Customer Module.
+  - Phát hiện cơ chế phòng thủ 2 lớp cho địa chỉ mặc định (Workflow soft unset + Partial Unique Index cấp DB).
+  - Nghiên cứu 6 Workflow Hook Points chính thức, Saga Compensation Pattern (`StepResponse`), và mô hình 3 lớp chống Spam Address DoS.
+  - Xuất bản thành công tài liệu hoàn chỉnh **Medusa Customer Module — Bản chất cốt lõi (v2 Enterprise Edition, 8 chương)** lên Notion.
+  - Cập nhật bộ 10 câu hỏi kỹ thuật chuyên sâu tại `notes/question.md`.
+  - Hoàn tất và đồng bộ báo cáo hàng ngày (`/daily-report`) lên LarkSuite Base với trạng thái Completed.
 
 ## Milestone 3: Tương tác & Impact với các Module khác
 - **Trạng thái:** ⬜ Chưa bắt đầu
 
 ## Milestone 4: Mở rộng (Extend) Customer Module
-- **Trạng thái:** Đang chuẩn bị (Ready for Task 1)
-- **Kế hoạch:** Sẽ thực hiện Code Zod Middleware, Workflow Hook, và Subscriber (Background Job) để lưu thông tin Zalo ID vào metadata.
+- **Trạng thái:** 🟡 Sẵn sàng thực thi code (Ready for Implementation)
+- **Kế hoạch 3 Tasks thực chiến:**
+  - Task 1: Code Quota Limit Middleware (`src/api/middlewares.ts`) chặn spam tối đa 20 địa chỉ.
+  - Task 2: Code Workflow Hook `customersCreated` (`src/workflows/hooks/customer-created.ts`) với Saga Compensation.
+  - Task 3: Code Event Subscriber `customer.created` (`src/subscribers/customer-created.ts`) gửi thông báo chào mừng async.
 
 ## Milestone 5: Xử lý Data Integrity (Merge Logic)
 - **Trạng thái:** ⬜ Chưa bắt đầu

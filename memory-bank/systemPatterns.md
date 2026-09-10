@@ -14,16 +14,27 @@
 
 ## Component Relationships & Module Links
 - `Storefront (Next.js)` --> `Backend API (Cổng 9000)` (Xác thực qua Publishable Key).
-- `Auth Module` <--> `Module Link (customer_account_holder)` <--> `Customer Module`.
-- `Cart / Order` bám vào `Customer` qua `customer_id`.
-- `Promotion` bám vào `Customer` qua `customer_group_id`.
+- `Payment Module` <--> `Module Link (customer_account_holder)` <--> `Customer Module` (Lưu Stripe Customer ID/AccountHolder).
+- `Auth Module` <--> `Logical Link (app_metadata / actor_id)` <--> `Customer Module` (Không sinh bảng pivot).
+- `Cart / Order` bám vào `Customer` qua `customer_id` (Read-only link).
+- `Promotion` bám vào `Customer` qua `customer_group_id` (Stored link: `customer_group_customer`).
 
-## Customer Module Data Patterns
+## Customer Module Data & Security Patterns
 - **5 Tables Architecture:**
   - `customer`: Bảng trung tâm lưu trữ danh bạ, họ tên, email, phone, metadata (JSONB).
   - `customer_address`: 1 Customer có nhiều Address, phân biệt bằng cờ `is_default_shipping` / `is_default_billing`.
   - `customer_group`: Nhóm khách hàng (VIP, Wholesaler,...).
   - `customer_group_customer`: Bảng trung gian N-N liên kết Customer và Group.
-  - `customer_account_holder`: Bảng Module Link trung gian liên kết Customer và AuthIdentity.
+  - `customer_account_holder`: Bảng Module Link trung gian liên kết Customer và Payment AccountHolder.
 - **Compound Unique Index:** `IDX_customer_email_has_account_unique` trên `(email, has_account) WHERE (deleted_at IS NULL)`. Cho phép 1 Guest và 1 Registered tồn tại song song cùng email, nhưng không cho phép 2 Guest hoặc 2 Registered trùng email.
-- **Soft Delete Pattern:** Tất cả các bảng Customer sử dụng `deleted_at`, khi xóa bằng API/Service thì record chỉ được đánh dấu timestamp, không bị purge khỏi DB.
+- **2-Layer Defense Pattern (Default Address):**
+  - *Layer 1 (Application Workflow):* Step `maybeUnsetDefaultShippingAddressesStep` tự động tìm và gỡ cờ `false` cho các địa chỉ cũ khi thêm/sửa địa chỉ mặc định mới.
+  - *Layer 2 (PostgreSQL Index):* `IDX_customer_address_unique_customer_shipping/billing` (`UNIQUE(customer_id) WHERE is_default_... = true`) chặn đứng Race Condition ở tầng DB.
+- **3-Tier Extension & Intervention Model:**
+  - *Tier 1: API Middleware (`src/api/middlewares.ts`):* Chặn request trước khi chạm core (Validation qua Zod, Quota Limit đếm địa chỉ).
+  - *Tier 2: Workflow Hook (`src/workflows/hooks/*`):* Chạy in-flight trong luồng Saga với `StepResponse` và Compensation Step để rollback tự động; dành riêng cho tác vụ **Reversible** (Tạo ví điểm Loyalty, cấp hạn mức B2B).
+  - *Tier 3: Event Subscriber (`src/subscribers/*`):* Chạy ngầm async sau khi DB đã commit; dành riêng cho tác vụ **Irreversible** (Gửi Email, Zalo ZNS, SMS viễn thông).
+- **Spam Address DoS & 3-Tier Enterprise Defense:**
+  - *Lỗ hổng:* Mặc định không giới hạn số lượng địa chỉ -> Admin UI bị treo (`addresses.map` không phân trang) và Node.js OOM khi serialize JSON.
+  - *Giải pháp 3 lớp:* Cloudflare Rate Limiting $\rightarrow$ Medusa Quota Middleware (chặn khi $\ge 20$ địa chỉ) $\rightarrow$ PostgreSQL Trigger chống burst song song.
+- **Soft Delete Pattern:** Tất cả các bảng Customer sử dụng `deleted_at`. Lưu ý: xóa mềm `customer` không kích hoạt `ON DELETE CASCADE` của PostgreSQL, cần chú ý tránh PII Leakage ở bảng con `customer_address`.

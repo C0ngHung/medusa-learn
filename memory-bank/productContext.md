@@ -11,7 +11,9 @@
 
 ## How It Should Work
 - Auth Module xác thực danh tính (AuthIdentity).
-- Customer Module lưu trữ thông tin nghiệp vụ.
-- Module Link kết nối AuthIdentity ↔ Customer (thông qua bảng `customer_account_holder`).
+- Auth Module xác thực danh tính (AuthIdentity).
+- Customer Module lưu trữ thông tin hồ sơ nghiệp vụ.
+- Payment Module liên kết với Customer thông qua Stored Link `customer_account_holder`.
+- Auth Module liên kết logic với Customer thông qua `app_metadata.customer_id` hoặc context actor ID (không sinh bảng pivot).
 - Quy trình đăng nhập bên thứ 3 (OAuth2) được thực hiện, webhook hoặc callback sẽ tự động tạo/nối AuthIdentity vào Customer tương ứng dựa trên Email hoặc chiến lược Merge (ADR-001).
-- Tài liệu Notion được chia thành 5 Phase logic: Bản chất -> `has_account` & Uniqueness -> Impact -> API có sẵn -> Hướng mở rộng (Extend).
+- Tài liệu Notion được chuẩn hóa theo chuẩn **v2 Enterprise Edition (8 chương)**: Bản chất & Khung tư duy -> Kiến trúc dữ liệu 5 bảng & Ràng buộc PostgreSQL -> Định danh Guest vs Registered & Merge -> Tích hợp liên module & Sequence Diagrams -> API Reference & Payloads -> Chiến lược mở rộng (metadata vs Custom Module) -> 3 Server Guides thực chiến (Quota Middleware, Loyalty Saga Hook, Order Claim) -> Production Hardening (GDPR, DoS defense).
