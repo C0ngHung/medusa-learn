@@ -19,3 +19,5 @@ Hoàn tất việc chuẩn hóa tài liệu (Architecture Playbook và Onboardin
 
 ## Known Issues / Blockers
 - Không có. Sẵn sàng thực thi code.
+
+- Đã tổng hợp research và update tài liệu Notion về Customer Module v2 (Guest vs Registered, Constraints, Registration Flow).
