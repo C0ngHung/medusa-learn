@@ -1,1 +1,8 @@
 .antigravitycli/
+.agents/mcp_config.json
+.vscode/mcp.json
+node_modules/
+medusa-core-source/
+.idea/
+my-medusa-store/.idea/
+*.log
