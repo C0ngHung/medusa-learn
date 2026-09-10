@@ -17,7 +17,7 @@
 - `Payment Module` <--> `Module Link (customer_account_holder)` <--> `Customer Module` (Lưu Stripe Customer ID/AccountHolder).
 - `Auth Module` <--> `Logical Link (app_metadata / actor_id)` <--> `Customer Module` (Không sinh bảng pivot).
 - `Cart / Order` bám vào `Customer` qua `customer_id` (Read-only link).
-- `Promotion` bám vào `Customer` qua `customer_group_id` (Stored link: `customer_group_customer`).
+- `Promotion` tương tác với `Customer` qua `customer_group_id` (Decoupled: Workflow truyền danh sách Group IDs vào Promotion Rule Engine lúc tính giỏ hàng, không có Foreign Key trực tiếp giữa 2 module).
 
 ## Customer Module Data & Security Patterns
 - **5 Tables Architecture:**
