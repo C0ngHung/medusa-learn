@@ -6,4 +6,5 @@ updated: 2026-07-18
 
 # User Preferences
 
-No durable user preferences have been recorded yet.
+## Documentation & Code Style Preferences
+- **Strict Emoji/Icon Ban:** Mentor and Leader strictly dislike emojis and icons in project materials. Do NOT use emojis or icons in documentation, code comments, commit messages, or Notion pages. Keep everything clean, professional, and standard enterprise-grade markdown.
