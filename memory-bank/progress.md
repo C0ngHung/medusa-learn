@@ -13,7 +13,9 @@
   - Phát hiện cơ chế phòng thủ 2 lớp cho địa chỉ mặc định (Workflow soft unset + Partial Unique Index cấp DB).
   - Nghiên cứu 6 Workflow Hook Points chính thức, Saga Compensation Pattern (`StepResponse`), và mô hình 3 lớp chống Spam Address DoS.
   - Xuất bản thành công tài liệu hoàn chỉnh **Medusa Customer Module — Bản chất cốt lõi (v2 Enterprise Edition, 8 chương)** lên Notion.
-  - Cập nhật bộ 11 câu hỏi kỹ thuật chuyên sâu tại `notes/question.md` (bao gồm Q11 phân định ranh giới độc lập giữa Customer Module và Promotion Module).
+  - Cập nhật & mở rộng bộ câu hỏi kỹ thuật chuyên sâu tại `notes/question.md` lên 16 câu hỏi toàn diện (Domain Logic vs Orchestration, Hook vs Event-driven, 5 cấp độ customization, Partial Unique Index).
+  - Rà soát, loại bỏ 100% icon/emoji trên 2 trang tài liệu Notion theo quy định doanh nghiệp của Mentor & Leader.
+  - Tích hợp sơ đồ quan hệ thực thể **Relations Overview** dạng Mermaid ER diagram vào Notion.
   - Hoàn tất và đồng bộ báo cáo hàng ngày (`/daily-report`) lên LarkSuite Base với trạng thái Completed.
 
 ## Milestone 3: Tương tác & Impact với các Module khác
