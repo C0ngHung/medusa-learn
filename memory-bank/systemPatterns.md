@@ -1,40 +1,56 @@
 # System Patterns
 
 ## Architecture
-- **Medusa v2 Workspace:** Sử dụng Turborepo để quản lý mono-repo (Backend + Storefront).
-- **File-based Routing:** Các API Routes được định nghĩa dựa trên cấu trúc thư mục (`src/api/...`).
-- **Data Modeling Language (DML):** Sử dụng DML thay cho TypeORM để định nghĩa Schema.
-- **Workflows:** Sử dụng hệ thống Workflow (Saga pattern) của Medusa cho các luồng logic phức tạp, đảm bảo tính nhất quán dữ liệu (Rollback khi có lỗi).
+- **Medusa v2 Workspace:** Su dung Turborepo de quan ly mono-repo (Backend + Storefront).
+- **File-based Routing:** Cac API Routes duoc dinh nghia dua tren cau truc thu muc (`src/api/...`).
+- **Data Modeling Language (DML):** Su dung DML thay cho TypeORM de dinh nghia Schema.
+- **Workflows:** Su dung he thong Workflow (Saga pattern) cua Medusa cho cac luong logic phuc tap, dam bao tinh nhat quan du lieu (Rollback khi co loi).
 
 ## Technical Decisions
-- **Dockerized Infrastructure:** Sử dụng `docker-compose` tự build để quản lý riêng rẽ PostgreSQL (port 5433) và Redis (port 6380), thay vì dùng dịch vụ Cloud mặc định.
-- **Package Manager:** Dùng `pnpm` workspace chuẩn.
-- **Custom AI Tooling:** Tích hợp `Portable Agent Kit` để bảo vệ mã nguồn (Guard System), cung cấp Workflows và quy định (Rules) code chuyên biệt cho Medusa/Node.js.
-- **AI-Assisted Development Stack:** Kết hợp MCP Server (`medusa-docs` cung cấp real-time schema/API context) cùng Plugin `medusa-dev` (7 skills cung cấp code generator, architectural rules và anti-pattern prevention) theo workflow 6 bước (Think -> Ask -> Code -> Validate -> DB -> Test).
+- **Dockerized Infrastructure:** Su dung `docker-compose` tu build de quan ly rieng re PostgreSQL (port 5433) va Redis (port 6380), thay vi dung dich vu Cloud mac dinh.
+- **Package Manager:** Dung `pnpm` workspace chuan.
+- **Custom AI Tooling:** Tich hop `Portable Agent Kit` de bao ve ma nguon (Guard System), cung cap Workflows va quy dinh (Rules) code chuyen biet cho Medusa/Node.js.
+- **AI-Assisted Development Stack:** Ket hop MCP Server (`medusa-docs` cung cap real-time schema/API context) cung Plugin `medusa-dev` (7 skills cung cap code generator, architectural rules va anti-pattern prevention) theo workflow 6 buoc (Think -> Ask -> Code -> Validate -> DB -> Test).
 
 ## Component Relationships & Module Links
-- `Storefront (Next.js)` --> `Backend API (Cổng 9000)` (Xác thực qua Publishable Key).
-- `Payment Module` <--> `Module Link (customer_account_holder)` <--> `Customer Module` (Lưu Stripe Customer ID/AccountHolder).
-- `Auth Module` <--> `Logical Link (app_metadata / actor_id)` <--> `Customer Module` (Không sinh bảng pivot).
-- `Cart / Order` bám vào `Customer` qua `customer_id` (Read-only link).
-- `Promotion` tương tác với `Customer` qua `customer_group_id` (Decoupled: Workflow truyền danh sách Group IDs vào Promotion Rule Engine lúc tính giỏ hàng, không có Foreign Key trực tiếp giữa 2 module).
+- `Storefront (Next.js)` --> `Backend API (Cong 9000)` (Xac thuc qua Publishable Key).
+- `Payment Module` <--> `Module Link (customer_account_holder)` <--> `Customer Module` (Luu Stripe Customer ID/AccountHolder).
+- `Auth Module` <--> `Logical Link (app_metadata.customer_id)` <--> `Customer Module` (Khong sinh bang pivot; nhieu `AuthIdentity` doc lap co the cung tro ve mot `Customer`).
+- `Cart / Order` bam vao `Customer` qua `customer_id` (Read-only link).
+- `Promotion` tuong tac voi `Customer` qua `customer_group_id` (Decoupled: Workflow truyen danh sach Group IDs vao Promotion Rule Engine luc tinh gio hang, khong co Foreign Key truc tiep giua 2 module).
 
 ## Customer Module Data & Security Patterns
 - **5 Tables Architecture:**
-  - `customer`: Bảng trung tâm lưu trữ danh bạ, họ tên, email, phone, metadata (JSONB).
-  - `customer_address`: 1 Customer có nhiều Address, phân biệt bằng cờ `is_default_shipping` / `is_default_billing`.
-  - `customer_group`: Nhóm khách hàng (VIP, Wholesaler,...).
-  - `customer_group_customer`: Bảng trung gian N-N liên kết Customer và Group.
-  - `customer_account_holder`: Bảng Module Link trung gian liên kết Customer và Payment AccountHolder.
-- **Compound Unique Index:** `IDX_customer_email_has_account_unique` trên `(email, has_account) WHERE (deleted_at IS NULL)`. Cho phép 1 Guest và 1 Registered tồn tại song song cùng email, nhưng không cho phép 2 Guest hoặc 2 Registered trùng email.
+  - `customer`: Bang trung tam luu tru danh ba, ho ten, email, phone, metadata (JSONB).
+  - `customer_address`: 1 Customer co nhieu Address, phan biet bang co `is_default_shipping` / `is_default_billing`.
+  - `customer_group`: Nhom khach hang (VIP, Wholesaler,...).
+  - `customer_group_customer`: Bang trung gian N-N lien ket Customer va Group.
+  - `customer_account_holder`: Bang Module Link trung gian lien ket Customer va Payment AccountHolder.
+- **Compound Unique Index:** `IDX_customer_email_has_account_unique` tren `(email, has_account) WHERE (deleted_at IS NULL)`. Cho phep 1 Guest va 1 Registered ton tai song song cung email, nhung khong cho phep 2 Guest hoac 2 Registered trung email.
+- **DTO Immutability Pattern (`has_account`):**
+  - `has_account` co mat trong `CreateCustomerDTO` nhung hoan toan vang mat trong `UpdateCustomerDTO` va `CustomerUpdatableFields`.
+  - Public service `customerModuleService.updateCustomers` khong cho phep cap nhat `has_account`.
+  - Do do, viec nang cap Guest tai cho (in-place upgrade) la customization nam ngoai public contract, can thiep entity internal hoac DB truc tiep.
+- **Production Account Reconciliation & Order Transfer Pattern:**
+  - Khi Guest dang ky tai khoan moi hoac dang nhap lan dau qua Social Auth: He thong tao Registered Customer moi thong qua `createCustomerAccountWorkflow`.
+  - Hai ban ghi (Guest va Registered) ton tai song song hop le nho Partial Unique Index.
+  - Chuyen giao don hang tu Guest sang Registered duoc thuc hien tach biet qua cap workflow chuan cua Medusa: `requestOrderTransferWorkflow` (phat token) -> `acceptOrderTransferWorkflow` (xac nhan token va chuyen quyen so huu don hang).
+- **Multi-Identity Link Pattern (Auth Module):**
+  - Auth Module quan ly `auth_identity` va `provider_identity` (`auth_identity.provider_identities`).
+  - Khi nguoi dung lien ket mot provider moi (vi du Google khi da co Email/Password), provider tao ra mot `AuthIdentity` moi voi `app_metadata` rong.
+  - Workflow lien ket danh tinh thiet lap: `new_auth_identity.app_metadata.customer_id = existing_customer.id`.
+  - Sau khi lien ket, client goi `POST /auth/token/refresh` de nhan JWT bearer token moi mang `actor_id` (`customer_id`).
+- **Safe 4-Step Saga Workflow Pattern (Loyalty & Compensation):**
+  - *Step 1 (Validate):* Kiem tra dieu kien eligibility.
+  - *Step 2 (Claim / Idempotency):* Ghi nhan ban ghi claim/ledger voi persistent database unique constraint `UNIQUE(customer_id, reward_type, source_id)`. Neu co 2 request dong thoi, request thua race se bi chan ngay tai day truoc khi cham vao so du.
+  - *Step 3 (Atomic Increment):* Cong diem vao Loyalty Module.
+  - *Step 4 (Inject Failure / Complete):* Kiem chung compensation rollback (Step 3 atomic decrement delta, Step 2 xoa/reverse claim).
+- **Extension Triad & API Boundary Pattern:**
+  - *Admin API (`POST /admin/customers`):* Boc qua `WithAdditionalData`, cho phep nhan `additional_data` va kiem tra schema qua `additionalDataValidator` tai `src/api/middlewares.ts`.
+  - *Storefront API (`POST /store/customers`):* Dung `StoreCreateCustomer`, khong nhan `additional_data`. Storefront truyen du lieu tuy bien qua `metadata` hoac tao custom Store route + workflow neu can contract chat che.
+  - *Workflow Hook (`src/workflows/hooks/*`):* Chay in-flight trong luong Saga voi `StepResponse` va Compensation Step; danh rieng cho tac vu Reversible.
+  - *Event Subscriber (`src/subscribers/*`):* Chay ngam async sau khi DB commit; danh rieng cho tac vu Irreversible (Email, SMS, thong bao).
 - **2-Layer Defense Pattern (Default Address):**
-  - *Layer 1 (Application Workflow):* Step `maybeUnsetDefaultShippingAddressesStep` tự động tìm và gỡ cờ `false` cho các địa chỉ cũ khi thêm/sửa địa chỉ mặc định mới.
-  - *Layer 2 (PostgreSQL Index):* `IDX_customer_address_unique_customer_shipping/billing` (`UNIQUE(customer_id) WHERE is_default_... = true`) chặn đứng Race Condition ở tầng DB.
-- **3-Tier Extension & Intervention Model:**
-  - *Tier 1: API Middleware (`src/api/middlewares.ts`):* Chặn request trước khi chạm core (Validation qua Zod, Quota Limit đếm địa chỉ).
-  - *Tier 2: Workflow Hook (`src/workflows/hooks/*`):* Chạy in-flight trong luồng Saga với `StepResponse` và Compensation Step để rollback tự động; dành riêng cho tác vụ **Reversible** (Tạo ví điểm Loyalty, cấp hạn mức B2B).
-  - *Tier 3: Event Subscriber (`src/subscribers/*`):* Chạy ngầm async sau khi DB đã commit; dành riêng cho tác vụ **Irreversible** (Gửi Email, Zalo ZNS, SMS viễn thông).
-- **Spam Address DoS & 3-Tier Enterprise Defense:**
-  - *Lỗ hổng:* Mặc định không giới hạn số lượng địa chỉ -> Admin UI bị treo (`addresses.map` không phân trang) và Node.js OOM khi serialize JSON.
-  - *Giải pháp 3 lớp:* Cloudflare Rate Limiting $\rightarrow$ Medusa Quota Middleware (chặn khi $\ge 20$ địa chỉ) $\rightarrow$ PostgreSQL Trigger chống burst song song.
-- **Soft Delete Pattern:** Tất cả các bảng Customer sử dụng `deleted_at`. Lưu ý: xóa mềm `customer` không kích hoạt `ON DELETE CASCADE` của PostgreSQL, cần chú ý tránh PII Leakage ở bảng con `customer_address`.
+  - *Layer 1 (Application Workflow):* Step `maybeUnsetDefaultShippingAddressesStep` tu dong tim va go co `false` cho cac dia chi cu khi them/sua dia chi mac dinh moi.
+  - *Layer 2 (PostgreSQL Index):* `IDX_customer_address_unique_customer_shipping/billing` (`UNIQUE(customer_id) WHERE is_default_... = true`) chan dung Race Condition o tang DB.
+- **Soft Delete Pattern:** Tat ca cac bang Customer su dung `deleted_at`. Luu y: xoa mem `customer` khong kich hoat `ON DELETE CASCADE` cua PostgreSQL, can chu y tranh PII Leakage o bang con `customer_address`.
