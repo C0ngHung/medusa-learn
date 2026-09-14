@@ -16,7 +16,7 @@
   - Cap nhat & mo rong bo cau hoi ky thuat chuyen sau tai `notes/question.md` len 16 cau hoi toan dien.
   - Ra soat, loai bo 100% icon/emoji tren 2 trang tai lieu Notion theo quy dinh doanh nghiep cua Mentor & Leader.
   - Tich hop so do quan he thuc the **Relations Overview** dang Mermaid ER diagram vao Notion.
-  - Hoan tat va dong bo bao cao hang ngay (`/daily-report`) len LarkSuite Base voi trang thai Completed.
+  - Hoan tat, nang cap toan dien workflow `/daily-report` theo chuan "Understated Rigor" va dong bo thanh cong 100% (21/21 tasks tu 07/09 den 14/09/2026) len LarkSuite Base voi trang thai Completed.
   - **Task 1 [Easy] - Customer Welcome Subscriber:** Da hoan thanh ma nguon tai `src/subscribers/customer-created.ts`, commit `a67515f`, pass 4/4 unit tests, kiem chung idempotency key tren database table `notification`.
 
 ## Milestone 3: Mo rong & Tich hop Customer Module (Lo trinh 8 Tasks v2.20.1)
