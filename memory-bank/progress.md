@@ -1,35 +1,38 @@
 # Progress Status
 
 ## Milestone 1: Setup & Architecture 
-- **Trạng thái:** ✅ Hoàn thành
-- **Output:** DB, MCP, `setup-mcp-db-user.sql` (agents role), Kiến trúc cốt lõi (Notion).
+- **Trang thai:** [Completed]
+- **Output:** DB, MCP, `setup-mcp-db-user.sql` (agents role), Kien truc cot loi (Notion).
 
-## Milestone 2: Làm chủ Customer Module Mặc định
-- **Trạng thái:** ✅ Hoàn thành (Completed)
-- **Công việc đã hoàn thành:** 
-  - Khảo sát tài liệu lý thuyết Customer Module, data models.
-  - Phân tích kiến trúc tích hợp (Module Links, AuthIdentity, App Metadata, Payment AccountHolder).
-  - DB inspection & source code analysis (5 bảng DB, UNIQUE index email+has_account, endpoints, `find-or-create-customer.ts`, `create-customer-account.ts`).
-  - Phát hiện cơ chế phòng thủ 2 lớp cho địa chỉ mặc định (Workflow soft unset + Partial Unique Index cấp DB).
-  - Nghiên cứu 6 Workflow Hook Points chính thức, Saga Compensation Pattern (`StepResponse`), và mô hình 3 lớp chống Spam Address DoS.
-  - Xuất bản thành công tài liệu hoàn chỉnh **Medusa Customer Module — Bản chất cốt lõi (v2 Enterprise Edition, 8 chương)** lên Notion.
-  - Cập nhật & mở rộng bộ câu hỏi kỹ thuật chuyên sâu tại `notes/question.md` lên 16 câu hỏi toàn diện (Domain Logic vs Orchestration, Hook vs Event-driven, 5 cấp độ customization, Partial Unique Index).
-  - Rà soát, loại bỏ 100% icon/emoji trên 2 trang tài liệu Notion theo quy định doanh nghiệp của Mentor & Leader.
-  - Tích hợp sơ đồ quan hệ thực thể **Relations Overview** dạng Mermaid ER diagram vào Notion.
-  - Hoàn tất và đồng bộ báo cáo hàng ngày (`/daily-report`) lên LarkSuite Base với trạng thái Completed.
+## Milestone 2: Lam chu Customer Module Mac dinh & Subscriber
+- **Trang thai:** [Completed]
+- **Cong viec da hoan thanh:** 
+  - Khao sat tai lieu ly thuyet Customer Module, data models.
+  - Phan tich kien truc tich hop (Module Links, AuthIdentity, App Metadata, Payment AccountHolder).
+  - DB inspection & source code analysis (5 bang DB, UNIQUE index email+has_account, endpoints, `find-or-create-customer.ts`, `create-customer-account.ts`).
+  - Phat hien co che phong thu 2 lop cho dia chi mac dinh (Workflow soft unset + Partial Unique Index cap DB).
+  - Nghien cuu 6 Workflow Hook Points chinh thuc, Saga Compensation Pattern (`StepResponse`), va mo hinh 3 lop chong Spam Address DoS.
+  - Xuat ban thanh cong tai lieu hoan chinh **Medusa Customer Module — Ban chat cot loi (v2 Enterprise Edition, 8 chuong)** len Notion.
+  - Cap nhat & mo rong bo cau hoi ky thuat chuyen sau tai `notes/question.md` len 16 cau hoi toan dien.
+  - Ra soat, loai bo 100% icon/emoji tren 2 trang tai lieu Notion theo quy dinh doanh nghiep cua Mentor & Leader.
+  - Tich hop so do quan he thuc the **Relations Overview** dang Mermaid ER diagram vao Notion.
+  - Hoan tat va dong bo bao cao hang ngay (`/daily-report`) len LarkSuite Base voi trang thai Completed.
+  - **Task 1 [Easy] - Customer Welcome Subscriber:** Da hoan thanh ma nguon tai `src/subscribers/customer-created.ts`, commit `a67515f`, pass 4/4 unit tests, kiem chung idempotency key tren database table `notification`.
 
-## Milestone 3: Tương tác & Impact với các Module khác
-- **Trạng thái:** ⬜ Chưa bắt đầu
+## Milestone 3: Mo rong & Tich hop Customer Module (Lo trinh 8 Tasks v2.20.1)
+- **Trang thai:** [In Progress]
+- **Cluster 1: Foundation & Extensions (Easy - Medium)**
+  - Task 1 [Easy]: Customer Welcome Subscriber -> [Completed] (code + 4/4 unit tests).
+  - Task 2 [Easy]: Admin Request Validation Middleware (`additionalDataValidator` & Zod tren `POST /admin/customers`) -> [Ready for Implementation].
+  - Task 3 [Medium]: Workflow Hook Customization (`createCustomersWorkflow.hooks.customersCreated`) -> [Pending].
+  - Task 4 [Medium]: Admin Dashboard UI Widget (`customer.details` zone) -> [Pending].
+- **Cluster 2: Custom Module & Distributed Transactions (Medium - Hard)**
+  - Task 5 [Med-Hard]: Custom Loyalty Module & Module Link (`defineLink`, migration) -> [Pending].
+  - Task 6 [Hard]: Multi-Step Saga Workflow with Compensation (4-step rollback & DB unique idempotency) -> [Pending].
+- **Cluster 3: Identity, Account Reconciliation & Social Auth (Hard - Expert)**
+  - Task 7 [Hard]: Account Reconciliation & Order Transfer (`createCustomerAccountWorkflow` + `requestOrderTransferWorkflow` / `acceptOrderTransferWorkflow` vs In-place Upgrade Spike) -> [Pending].
+  - Task 8 [Expert]: Social Login & Multi-Identity Orchestration (OAuth callback 3 branches & JWT refresh) -> [Pending].
 
-## Milestone 4: Mở rộng (Extend) Customer Module
-- **Trạng thái:** 🟡 Sẵn sàng thực thi code (Ready for Implementation)
-- **Kế hoạch 3 Tasks thực chiến:**
-  - Task 1: Code Quota Limit Middleware (`src/api/middlewares.ts`) chặn spam tối đa 20 địa chỉ.
-  - Task 2: Code Workflow Hook `customersCreated` (`src/workflows/hooks/customer-created.ts`) với Saga Compensation.
-  - Task 3: Code Event Subscriber `customer.created` (`src/subscribers/customer-created.ts`) gửi thông báo chào mừng async.
-
-## Milestone 5: Xử lý Data Integrity (Merge Logic)
-- **Trạng thái:** ⬜ Chưa bắt đầu
-
-## Milestone 6: Thực chiến Social Login Use Case
-- **Trạng thái:** ⬜ Chưa bắt đầu
+## Milestone 4: Xy ly Data Integrity & Production Verification
+- **Trang thai:** [Pending]
+- **Muc tieu:** Verification gates theo bang Evidence of Completion trong `LEARNING_PLAN.md`.
