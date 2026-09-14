@@ -1,30 +1,34 @@
 # Active Context
 
 ## Current Focus
-Rà soát chuyên sâu tài liệu Customer Module (8 chương chuẩn Enterprise), hoàn thiện sơ đồ quan hệ thực thể Relations Overview trên Notion, chuẩn hóa phong cách tài liệu không emoji/icon và chuẩn bị kịch bản phản biện kỹ thuật cho buổi presentation nội bộ cùng team.
+Bat dau trien khai thuc hanh **Task 2: Admin Request Validation Middleware** (`additionalDataValidator` voi Zod tren `POST /admin/customers`) tai `my-medusa-store/apps/backend/src/api/middlewares.ts` theo hinh thuc 1-1 pair programming.
 
 ## Recent Changes
-- Phân tích trực tiếp source code core của Medusa: `find-or-create-customer.ts` (cơ chế Guest mặc định) và `create-customer-account.ts` (ép cờ `has_account` và nối Auth Identity).
-- Đã xuất bản thành công tài liệu **Medusa v2: Core Architecture & Design Patterns** lên Notion (bao gồm kiến trúc Workflow, Extension Triad, và nguyên lý không dùng async/await trong khai báo Workflow).
-- Đã xuất bản thành công tài liệu **Onboarding Guide: Từ Java Master đến MedusaJS** lên Notion (4 cú quay xe tư duy: Event Loop, Destructuring, Duck Typing, First-class Functions).
-- Đã hoàn tất báo cáo hàng ngày (`/daily-report`) cho ngày 10/09/2026 và 11/09/2026 lên LarkSuite Base với các task kỹ thuật chuẩn hóa.
-- Đã nâng cấp toàn diện tài liệu **Medusa Customer Module — Bản chất cốt lõi** lên phiên bản v2 Enterprise Edition trên Notion: Bổ sung Data Dictionary chi tiết, sơ đồ Sequence Diagrams đăng ký 2 bước & Guest Checkout, bảng tra cứu 6 Workflow Hook Points chính thức, mô hình Saga Compensation (`StepResponse`), nguyên tắc ranh giới Reversible (Hook) vs Irreversible (Subscriber), và giải pháp 3 lớp chống Spam Address DoS (Quota Middleware).
-- Tích hợp sơ đồ quan hệ thực thể **Relations Overview** chuẩn từ tài liệu Medusa Documentation dưới dạng Mermaid ER diagram (`Customer`, `CustomerAddress`, `CustomerGroup`) trực tiếp vào Mục 2.1 Chương 2 của trang Notion Customer Module.
-- Rà soát và loại bỏ triệt để 100% toàn bộ emoji/icon trên cả 2 trang Notion (`Medusa Customer Module` và `Medusa v2: Core Architecture & Design Patterns`) tuân thủ nghiêm ngặt quy định phong cách làm việc của Mentor & Leader.
-- Mở rộng toàn diện bộ câu hỏi kỹ thuật chuyên sâu tại `notes/question.md` từ 10 câu lên 16 câu hỏi bao quát Domain Logic vs Orchestration, 2 cơ chế can thiệp luồng Hook vs Event, 5 cấp độ customization trong Medusa v2, và cơ chế Partial Unique Index `(email, has_account)`.
+- Hoan thanh tron ven **Task 1: Customer Welcome Subscriber**:
+  - Trien khai tai `src/subscribers/customer-created.ts` voi co che idempotency key `welcome-customer:{customer_id}:email`.
+  - Pass 4/4 unit tests tai `src/subscribers/__tests__/customer-created.unit.spec.ts`.
+  - Kiem chung live tren database PostgreSQL `notification` table khi tao khach hang qua Medusa Admin.
+  - Commit ma nguon `a67515f` tren branch `main`.
+- Chuan hoa toan dien tai lieu kien truc **`LEARNING_PLAN.md`** doi chieu source code Medusa v2.20.1:
+  - Xac dinh ro API boundary: `POST /admin/customers` ho tro `additional_data` qua `WithAdditionalData`, con `POST /store/customers` chi nhan fields chuan va `metadata`.
+  - Chuan hoa mo hinh Auth Module: `auth_identity` va cac `provider_identity` (`auth_identity.provider_identities`); nhieu `AuthIdentity` co the cung tro toi mot `Customer` thong qua `app_metadata.customer_id`.
+  - Phat hien gioi han DTO: `has_account` co trong `CreateCustomerDTO` nhung khong co trong `UpdateCustomerDTO` va `CustomerUpdatableFields`. Public service `customerModuleService.updateCustomers` khong ho tro sua `has_account`.
+  - Dinh vi kien truc Account Reconciliation chuan: Tao Registered Customer qua `createCustomerAccountWorkflow`, chuyen don qua `requestOrderTransferWorkflow` -> `acceptOrderTransferWorkflow`; coi In-place Upgrade la Research Spike ngoai public contract.
+  - Thiet ke luong Saga 4 buoc an toan: (1) Validate -> (2) DB unique claim -> (3) Atomic increment -> (4) Failure injection de rollback.
+  - Chuan hoa luong JWT refresh qua `POST /auth/token/refresh` sau khi lien ket identity.
+  - Thiet lap bang Evidence of Completion lam verification gate cho 3 cum task.
+- Hoan tat cap nhat va lam sach 100% icon/emoji tren ca hai trang Notion (Playbook Customer Welcome Subscriber va Root Onboarding Guide) cung nhu bao cao hang ngay LarkSuite Base.
 
 ## Active Decisions
-- Tuyệt đối tuân thủ quy tắc không dùng emoji/icon trong tài liệu kỹ thuật, commit messages, và trang Notion theo yêu cầu khắt khe của Mentor & Leader.
-- Tích hợp trực tiếp Mermaid diagram vào Notion markdown để nền tảng tự render đồ họa tương tác.
-- Lưu trữ mọi lý thuyết và Mental Model dưới dạng Notion page độc lập, có link liên kết, không viết dồn vào một file để tránh loãng thông tin.
-- Chuẩn bị bắt tay vào triển khai thực tế bộ 3 thành phần mở rộng: Quota Middleware, Loyalty Wallet Hook (Saga), và Welcome Subscriber.
+- Tuyet doi tuan thu quy tac khong dung emoji/icon trong code, tai lieu ky thuat, commit messages va Notion.
+- Huong toi kien truc chuan san xuat (production-ready): Dung workflow chinh thuc (`createCustomerAccountWorkflow`, `requestOrderTransferWorkflow`, `acceptOrderTransferWorkflow`) thay vi can thiep truc tiep vao database hoac entity internal de sua `has_account`.
+- Bao ve idempotency xuyen suot bang rang buoc duy nhat tren database (`UNIQUE constraint`), khong chi dua vao in-memory hoac workflow execution engine.
+- Tuan thu Antigravity CLI Delegation Rule: IDE khong tu dong chay cac lenh commit, push, build, test; cung cap CLI task blocks day du de user thuc thi qua terminal ngoai.
 
 ## Next Steps
-1. Thực hành code thực chiến (Hands-on) tại `my-medusa-store/apps/backend`:
-   - Task 1: Tạo Middleware Quota Limit (`src/api/middlewares.ts`) chặn spam tối đa 20 địa chỉ.
-   - Task 2: Tạo Workflow Hook `customersCreated` (`src/workflows/hooks/customer-created.ts`) có Saga Compensation.
-   - Task 3: Tạo Event Subscriber `customer.created` (`src/subscribers/customer-created.ts`) gửi thông báo chào mừng.
-2. Kiểm thử và xác nhận bằng unit / integration test và verify qua HTTP client.
+1. Pair-programming Task 2: Dinh nghia middleware validation cho `POST /admin/customers` voi `additionalDataValidator` va Zod schema (`zalo_id`, `avatar_url`) tai `src/api/middlewares.ts`.
+2. Kiem thu middleware validation bang HTTP requests (kiem tra truong hop input sai bi 400 va input dung duoc pass).
+3. Tiep tuc sang Task 3: Workflow Hook `customersCreated` de luu `additional_data` vao `metadata`.
 
 ## Known Issues / Blockers
-- Không có. Sẵn sàng thực thi code.
+- Khong co. Base project va DB san sang cho Task 2.
