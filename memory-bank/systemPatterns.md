@@ -47,6 +47,7 @@
   - *Step 4 (Inject Failure / Complete):* Kiem chung compensation rollback (Step 3 atomic decrement delta, Step 2 xoa/reverse claim).
 - **Extension Triad & API Boundary Pattern:**
   - *Admin API (`POST /admin/customers`):* Boc qua `WithAdditionalData`, cho phep nhan `additional_data` va kiem tra schema qua `additionalDataValidator` tai `src/api/middlewares.ts`.
+  - *Middleware Validation Pattern:* Su dung Zod v4 voi method chaining (`z.string().regex(...)`, `z.url({ protocol: /^https?$/ })`) de xac thuc `additional_data`, dong thoi tan dung co che mac dinh cua Zod de tu dong loai bo truong ngoai khai bao (stripping unknown keys) chong injection payload.
   - *Storefront API (`POST /store/customers`):* Dung `StoreCreateCustomer`, khong nhan `additional_data`. Storefront truyen du lieu tuy bien qua `metadata` hoac tao custom Store route + workflow neu can contract chat che.
   - *Workflow Hook (`src/workflows/hooks/*`):* Chay in-flight trong luong Saga voi `StepResponse` va Compensation Step; danh rieng cho tac vu Reversible.
   - *Event Subscriber (`src/subscribers/*`):* Chay ngam async sau khi DB commit; danh rieng cho tac vu Irreversible (Email, SMS, thong bao).
