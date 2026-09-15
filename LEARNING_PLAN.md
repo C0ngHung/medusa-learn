@@ -114,6 +114,7 @@ Task 8 [Expert]     : Social Login & Multi-Identity Orchestration (OAuth Callbac
 
 #### Task 2 [Easy] - Admin Request Validation Middleware
 - **Muc tieu:** Rang buoc contract va schema validation cho du lieu bo sung (`additional_data`) khi tao Customer qua Admin API.
+- **Trang thai:** Da hoan thanh ma nguon tai `src/api/middlewares.ts`, pass 7/7 unit tests tai `src/api/__tests__/middlewares.unit.spec.ts` va pass 0 lint issues (`medusa lint`).
 - **Kien truc:** Su dung `additionalDataValidator` voi Zod tu `@medusajs/framework/zod` trong `src/api/middlewares.ts` ap dung cho route `POST /admin/customers`.
 - **Dac ta:** Validate `additional_data.zalo_id` (string, regex hop le) va `additional_data.avatar_url` (url hop le).
 - **Mo rong:** Nam ro co che truyen metadata truc tiep qua `POST /store/customers` hoac xay dung custom Store route khi can validate chat che o Storefront.
