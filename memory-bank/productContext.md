@@ -11,7 +11,6 @@
 
 ## How It Should Work
 - Auth Module xác thực danh tính (AuthIdentity).
-- Auth Module xác thực danh tính (AuthIdentity).
 - Customer Module lưu trữ thông tin hồ sơ nghiệp vụ.
 - Payment Module liên kết với Customer thông qua Stored Link `customer_account_holder`.
 - Auth Module liên kết logic với Customer thông qua `app_metadata.customer_id` hoặc context actor ID (không sinh bảng pivot).
