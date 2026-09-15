@@ -2,11 +2,12 @@
 
 ## Technologies
 - **Core Framework:** Medusa v2 (@medusajs/medusa v2.20.1)
-- **Runtime:** Node.js (v20+), TypeScript
+- **Runtime:** Node.js (v24.18.0 via NVM), TypeScript (v5.6)
 - **Database:** PostgreSQL (v15+) tren cong 5433 (`medusa-learn` db)
 - **Cache / PubSub:** Redis (v7+) tren cong 6380
 - **Storefront:** Next.js (React), Tailwind CSS
-- **Package Manager:** pnpm (v9)
+- **Package Manager:** pnpm (v11.9.0)
+- **Code Quality & Linter:** ESLint voi `@medusajs/eslint-plugin` (tuan thu convention 2 spaces, double quotes, no semicolons qua `medusa lint`)
 - **AI Tooling & Skills:** 
   - Medusa MCP Server (`https://docs.medusajs.com/mcp`)
   - Database MCP Server (`medusa_db` query truc tiep PostgreSQL port 5433)
