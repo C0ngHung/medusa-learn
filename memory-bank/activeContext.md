@@ -1,9 +1,16 @@
 # Active Context
 
 ## Current Focus
-Bat dau trien khai thuc hanh **Task 2: Admin Request Validation Middleware** (`additionalDataValidator` voi Zod tren `POST /admin/customers`) tai `my-medusa-store/apps/backend/src/api/middlewares.ts` theo hinh thuc 1-1 pair programming.
+Hoan thanh **Task 2: Admin Request Validation Middleware**; chuyen tiep sang nghien cuu va thiet ke **Task 3: Workflow Hook Customization** (`createCustomersWorkflow.hooks.customersCreated`) de dong bo `additional_data` vao `metadata` cua Customer.
 
 ## Recent Changes
+- Hoan thanh tron ven **Task 2: Admin Request Validation Middleware**:
+  - Trien khai middleware tai `my-medusa-store/apps/backend/src/api/middlewares.ts` mo rong schema `additional_data` cho route `POST /admin/customers`.
+  - Ap dung `additionalDataValidator` voi Zod v4: Rang buoc `zalo_id` (regex chuoi 8-20 chu so), `avatar_url` (giao thuc http/https), va co che tu dong loai bo truong ngoai khai bao (stripping unknown keys).
+  - Hoan thien bo Unit Tests tai `src/api/__tests__/middlewares.unit.spec.ts` pass 7/7 test cases (du lieu hop le, gia tri bien, URL sai, va tu choi null).
+  - Kiem tra toan dien static analysis: `medusa lint` dat 0 lint issues (tuan thu 100% no semicolons, 2 spaces).
+  - Commit ma nguon `cefa970` (`feat[TASK-002]:[api]:add admin customer validation middleware and tests`).
+  - Dong bo bao cao hang ngay ngay 15/09/2026 len LarkSuite Base theo dung chuan muc Understated Rigor va Zero-Emoji (Yesterday: `recvvfLcOQYsKL`, Today: `recvvfLfzODiLS`).
 - Hoan thanh tron ven **Task 1: Customer Welcome Subscriber**:
   - Trien khai tai `src/subscribers/customer-created.ts` voi co che idempotency key `welcome-customer:{customer_id}:email`.
   - Pass 4/4 unit tests tai `src/subscribers/__tests__/customer-created.unit.spec.ts`.
@@ -31,9 +38,9 @@ Bat dau trien khai thuc hanh **Task 2: Admin Request Validation Middleware** (`a
 - Tuan thu Antigravity CLI Delegation Rule: IDE khong tu dong chay cac lenh commit, push, build, test; cung cap CLI task blocks day du de user thuc thi qua terminal ngoai.
 
 ## Next Steps
-1. Pair-programming Task 2: Dinh nghia middleware validation cho `POST /admin/customers` voi `additionalDataValidator` va Zod schema (`zalo_id`, `avatar_url`) tai `src/api/middlewares.ts`.
-2. Kiem thu middleware validation bang HTTP requests (kiem tra truong hop input sai bi 400 va input dung duoc pass).
-3. Tiep tuc sang Task 3: Workflow Hook `customersCreated` de luu `additional_data` vao `metadata`.
+1. Pair-programming Task 3: Thiet ke va trien khai Workflow Hook `createCustomersWorkflow.hooks.customersCreated` de trich xuat `additional_data` luu vao `metadata`.
+2. Dam bao cap nhat `metadata` khong ghi de cac metadata co san va khong kich hoat cascade event khong can thiet.
+3. Viet Unit Test mo phong luong hook injection va kiem chung bang integration test.
 
 ## Known Issues / Blockers
-- Khong co. Base project va DB san sang cho Task 2.
+- Khong co. Task 2 da hoan thanh, moi truong san sang cho Task 3.
