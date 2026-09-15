@@ -23,7 +23,7 @@
 - **Trang thai:** [In Progress]
 - **Cluster 1: Foundation & Extensions (Easy - Medium)**
   - Task 1 [Easy]: Customer Welcome Subscriber -> [Completed] (code + 4/4 unit tests).
-  - Task 2 [Easy]: Admin Request Validation Middleware (`additionalDataValidator` & Zod tren `POST /admin/customers`) -> [Ready for Implementation].
+  - Task 2 [Easy]: Admin Request Validation Middleware (`additionalDataValidator` & Zod tren `POST /admin/customers`) -> [Completed] (code + 7/7 unit tests + pass lint).
   - Task 3 [Medium]: Workflow Hook Customization (`createCustomersWorkflow.hooks.customersCreated`) -> [Pending].
   - Task 4 [Medium]: Admin Dashboard UI Widget (`customer.details` zone) -> [Pending].
 - **Cluster 2: Custom Module & Distributed Transactions (Medium - Hard)**
